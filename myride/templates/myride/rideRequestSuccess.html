@@ -1,0 +1,7 @@
+{% extends 'base.html' %}
+
+{% block title %}Success{% endblock %}
+{% block content %}
+  <h2>Ride request submitted! Please go back to dashboard</h2> <!---dashboard换成owner界面-->
+    <h3><a href="{% url 'dashboard' %}">Dashboard</a></h3>
+{% endblock %}

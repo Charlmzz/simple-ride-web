@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block title %}Driver registration{% endblock %}
+
+{% block content %}
+  <h2>Driver registration</h2>
+  <form method="post" action="/registration/" novalidate>
+    {% csrf_token %}
+      {% for field in form %}
+           <div class="form-group">
+    <label for="inputName">{{ field.label }}</label>
+               {{ field }}
+               <span style="color:red;">{{ field.errors.0 }}</span>
+  </div>
+      {% endfor %}
+  <button type="submit" class="btn btn-primary">Submit</button>
+  </form>
+{% endblock %}
