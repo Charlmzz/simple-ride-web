@@ -1,0 +1,129 @@
+<!-- templates/base.html -->
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>{% block title %}Django Auth Tutorial{% endblock %}</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+</head>
+<body>
+  <main>
+    {% block content %}
+      <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <a class="navbar-brand" href="#">Welcome</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item active">
+          <a class="nav-link" href="/depart_list">Home <span class="sr-only">(current)</span></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Link</a>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Role Choose
+          </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <a class="dropdown-item" href="/riderequest">Ride owner</a>
+          <a class="dropdown-item" href="/registration">Ride sharer</a>
+          <a class="dropdown-item" href="/registration">Driver</a>
+        </div>
+      </li>
+    </ul>
+    <form class="form-inline my-2 my-lg-0">
+      <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+      <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+    </form>
+  </div>
+</nav>
+<hr>
+    <div>
+      <div class="container">
+        <div style="margin-bottom: 10px">
+          <a class="btn btn-primary" href="/riderequest">Start A New Ride!</a>
+        </div>
+    </div>
+  </div>
+
+    <br>
+
+  <div class="container">
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Destination</th>
+            <th>Arrival Time</th>
+            <th>Passenger Number</th>
+            <th>Vehicle_type</th>
+            <th>Sharer Number</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">1</th>
+            <td>New York</td>
+            <td>10:00am</td>
+            <td>3</td>
+            <td>car</td>
+            <td>1</td>
+            <td>confirmed</td>
+            <td>
+              <a class="btn btn-success btn-xs">edit</a>
+              <a class="btn btn-danger btn-xs">delete</a>
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">2</th>
+            <td>Duke Univ</td>
+            <td>17:00pm</td>
+            <td>4</td>
+            <td>car</td>
+            <td>2</td>
+            <td>complete</td>
+            <td>
+              <a class="btn btn-success btn-xs">edit</a>
+              <a class="btn btn-danger btn-xs">delete</a>
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">3</th>
+            <td>Chapel Hill</td>
+            <td>12:00pm</td>
+            <td>2</td>
+            <td>car</td>
+            <td>0</td>
+            <td>open</td>
+            <td>
+              <a class="btn btn-success btn-xs">edit</a>
+              <a class="btn btn-danger btn-xs">delete</a>
+            </td>
+          </tr>
+          </tr>
+        </tbody>
+      </table>
+</div>
+</div>
+</div>
+
+
+    {% endblock %}
+  </main>
+</body>
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+</html>
+
+
+
+
+
+
+

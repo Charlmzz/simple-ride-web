@@ -1,3 +1,4 @@
+
 {% extends 'base.html' %}
 
 {% block title %}Dashboard{% endblock %}
@@ -6,9 +7,5 @@
     <h4><a href="{% url 'register' %}">Edit My Vehicle Info</a></h4>
     <h4><a href="{% url 'register' %}">Edit My Personal Info</a></h4> <!--need edit-->
     <!--!!!!!!!!<h3><a href="">View or modify rides</a></h3> NOT IMPLEMENTED-->
-    <h2>Want a trip? Select your role:</h2>
-      <form method="post" action="/dashboard/" novalidate>
-    {% csrf_token %}
-        <button type="submit" class="btn btn-primary">Submit</button>
   </form>
 {% endblock %}

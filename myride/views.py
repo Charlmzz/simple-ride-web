@@ -1,12 +1,24 @@
 # accounts/views.py
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.hashers import check_password
 from django.urls import reverse_lazy
 from django.views import generic
-from django.shortcuts import render
-from django.http import HttpResponse
+from django.shortcuts import render, redirect
+from django.http import HttpResponse, HttpResponseRedirect
 from myride.models import *
 from django import forms
+from django.contrib.auth import authenticate,login
+from .models import User
 
+
+
+def depart_list(request):
+    #check session info of request
+    info=request.session.get("info")
+    if not info:
+        return redirect("/login")
+
+    return render(request, 'depart_list.html')
 
 def home(request):
     return render(request,'home.html')
@@ -83,7 +95,8 @@ def signup(request):
         else:
             obj.user_id = lastUser.user_id+1
         obj.save()
-        return render(request,'regSuccess.html')
+        return redirect("/login")
+        #return render(request,'regSuccess.html')
     else:
         return render(request,'signup.html',{"form":form})
 #----------------------------------sign up ends
@@ -93,8 +106,15 @@ def login(request):
         return render(request, "login.html")
     username = request.POST.get("user")
     password = request.POST.get("pwd")
-    if username == "vcm" and password == "charlene":
-        return HttpResponse("Log in Success") #render dashboard
+    if User.objects.filter(user_name=username).exists():
+        user = User.objects.get(user_name=username)
+        if password==user.password:
+            response = HttpResponseRedirect('/depart_list')
+            # add the user info into session
+            request.session["info"]=user.user_id
+            return response
+        else:
+            return render(request, 'login.html', {"err_msg": "Incorrect username or password"})
     else:
         return render(request,'login.html', {"err_msg":"Incorrect username or password"})
 
@@ -112,16 +132,20 @@ def dashboard(request):
 class rideForm(forms.ModelForm):
     class Meta:
         model = Ride
-        fields = ["destination","arrival_timestamp","num_passengers","vehicle_type","special_req"]
+        fields = ["destination","arrival_date","arrival_time","num_passengers","vehicle_type","special_req"]
         widgets = {
             "destination": forms.TextInput(attrs={"class": "form-control", "placeholder": "Enter your destination"}),
-            "arrival_timestamp": forms.DateTimeInput(attrs={"class": "form-control", "placeholder": "Enter an arrival time. Format: YYYY-MM-DD HH:MM:SS or MM/DD/YY HH:MM"}),
+            "arrival_date": forms.DateInput(attrs={"class": "form-control", "placeholder": "Enter an arrival date. Format: YYYY-MM-DD or MM/DD/YY"}),
+            "arrival_time": forms.TimeInput(attrs={"class": "form-control", "placeholder": "Enter an arrival time. Format: HH:MM:SS or HH:MM"}),
             "num_passengers": forms.NumberInput(attrs={"class": "form-control", "placeholder": "Enter number of passengers"}),
             "vehicle_type": forms.TextInput(attrs={"class": "form-control", "placeholder": "Enter a vehicle type that you wish"}),
             "special_req": forms.TextInput(attrs={"class": "form-control", "placeholder": "Enter any special info you would let others know"})
         }
 
 def riderequest(request):
+    info = request.session.get("info")
+    if not info:
+        return redirect("/login")
     if request.method=="GET":
         form = rideForm()
         return render(request,'rideRequest.html',{"form":form})
@@ -135,11 +159,14 @@ def riderequest(request):
         else:
             obj.ride_id = lastRide.ride_id+1
         #!!!!!!!!!!!!also need owner id
+        obj.sharer_num = 0
+        obj.status = 1
+        currUser = User.objects.get(user_id=info)
+        obj.owner_id = currUser
         obj.save()
         #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!save foreign key in user and more
         return render(request,'rideRequestSuccess.html')
     else:
         return render(request,'rideRequest.html',{"form":form})
-
 
 

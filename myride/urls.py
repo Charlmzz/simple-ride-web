@@ -12,10 +12,11 @@ from myride import views
 urlpatterns = [
     path('registration/',views.registration, name='register'),
     path('signup/', views.signup, name='signup'),
-    #path('signup/', SignUpView.as_view(template_name='registration/signup.html'), name='signup'),
     path('', views.home, name='home'),
     path('login/',views.login,name='login'),
     path('save/',views.storeInfo,name='storeInfo'),
-    path('dashboard/',views.dashboard,name='dashboard'),
+    path('depart_list/',views.depart_list),
     path('riderequest/',views.riderequest,name='ridereq'),
+    path('dashboard/',views.dashboard,name='dashboard'),
+
 ]
