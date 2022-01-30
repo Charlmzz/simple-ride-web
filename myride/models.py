@@ -10,9 +10,11 @@ class Vehicle(models.Model):
     plate_num = models.CharField(max_length=20, null=False)
     max_passenger = models.IntegerField(null=False)
     special_info = models.CharField(max_length=10, null=True)
+    '''
     def __str__(self):
         """String for representing the Model object."""
-        return self.type
+        return self.vehicle_id
+    '''
 
 class User(models.Model):
     user_id = models.IntegerField(null=False,primary_key=True)
@@ -29,7 +31,7 @@ class User(models.Model):
 
     def __str__(self):
         """String for representing the Model object."""
-        return self.name
+        return self.user_name
 
 
 class Ride(models.Model):

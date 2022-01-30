@@ -15,8 +15,9 @@ urlpatterns = [
     path('', views.home, name='home'),
     path('login/',views.login,name='login'),
     path('save/',views.storeInfo,name='storeInfo'),
-    path('depart_list/',views.depart_list),
+    path('depart_list/',views.depart_list,name='departList'),
     path('riderequest/',views.riderequest,name='ridereq'),
-    path('dashboard/',views.dashboard,name='dashboard'),
-
+    path('settings/',views.dashboard,name='dashboard'),
+    path('settings/edit-vehicle/',views.vehicle_edit,name='vehicleEdit'),
+    path('settings/edit-user/',views.user_edit,name='userEdit'),
 ]

@@ -37,6 +37,9 @@ class regForm(forms.ModelForm):
         }
 
 def registration(request):
+    info=request.session.get("info")
+    if not info:
+        return redirect("/login")
     if request.method=="GET":
         form = regForm()
         return render(request,'registration.html',{"form":form})
@@ -49,8 +52,11 @@ def registration(request):
             obj.vehicle_id = 1
         else:
             obj.vehicle_id = lastVehicle.vehicle_id+1
+        currUser = User.objects.get(user_id=info)
         obj.save()
-        #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!save foreign key in user
+        currUser.vehicle_id = Vehicle.objects.last()
+        currUser.save()
+
         return render(request,'driverRegSuccess.html')
     else:
         return render(request,'registration.html',{"form":form})
@@ -125,10 +131,13 @@ class SignUpView(generic.CreateView):
     #return HttpResponse()
 
 def dashboard(request):
+    info = request.session.get("info")
+    if not info:
+        return redirect("/login")
     return render(request,"dashboard.html")
 
 #-----------------------------------need owner id!!!!!!, time stamp need bootstrap
-#model form for registration
+#model form for ride
 class rideForm(forms.ModelForm):
     class Meta:
         model = Ride
@@ -164,9 +173,45 @@ def riderequest(request):
         currUser = User.objects.get(user_id=info)
         obj.owner_id = currUser
         obj.save()
-        #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!save foreign key in user and more
         return render(request,'rideRequestSuccess.html')
     else:
         return render(request,'rideRequest.html',{"form":form})
 
+def vehicle_edit(request):
+    info = request.session.get("info")
+    if not info:
+        return redirect("/login")
+    obj = User.objects.get(user_id=info)
+    if not obj.vehicle_id:
+        return redirect('register')
+    if request.method =="GET":
+        #get current data
+        raw_obj = Vehicle.objects.filter(vehicle_id=obj.vehicle_id.vehicle_id).first()
+        form = regForm(instance=raw_obj)
+        return render(request,'vehicle_edit.html',{"form":form})
+    #POST
+    raw_obj = Vehicle.objects.filter(vehicle_id=obj.vehicle_id.vehicle_id).first()
+    form = regForm(data=request.POST,instance=raw_obj)
+    if form.is_valid():
+        form.save()
+        return redirect('dashboard')
+    return render(request, 'vehicle_edit.html', {"form": form})
+
+def user_edit(request):
+    info = request.session.get("info")
+    if not info:
+        return redirect("/login")
+    if request.method =="GET":
+        #get current data
+        raw_obj = User.objects.filter(user_id=info).first()
+        form = signupForm(instance=raw_obj)
+        return render(request,'user_edit.html',{"form":form})
+    #POST
+    raw_obj = User.objects.filter(user_id=info).first()
+    form = signupForm(data=request.POST,instance=raw_obj)
+    if form.is_valid():
+        form.clean()
+        form.save()
+        return redirect('dashboard')
+    return render(request, 'user_edit.html', {"form": form})
 
