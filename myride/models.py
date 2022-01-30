@@ -29,10 +29,11 @@ class User(models.Model):
     user_name = models.CharField(verbose_name="user name", max_length=20,null=False)
     password = models.CharField(verbose_name="password", max_length=20,null=False)
 
+'''
     def __str__(self):
         """String for representing the Model object."""
         return self.user_name
-
+'''
 
 class Ride(models.Model):
     ride_id = models.IntegerField(null=False,primary_key=True)

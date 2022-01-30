@@ -20,4 +20,5 @@ urlpatterns = [
     path('settings/',views.dashboard,name='dashboard'),
     path('settings/edit-vehicle/',views.vehicle_edit,name='vehicleEdit'),
     path('settings/edit-user/',views.user_edit,name='userEdit'),
+    path('settings/<int:rid>/edit-ride/',views.ride_edit,name='rideEdit'),
 ]

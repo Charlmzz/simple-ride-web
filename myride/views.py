@@ -17,8 +17,16 @@ def depart_list(request):
     info=request.session.get("info")
     if not info:
         return redirect("/login")
-
-    return render(request, 'depart_list.html')
+    currUser = User.objects.get(user_id=info)
+    #get owned ride
+    edit_list = Ride.objects.filter(owner_id=currUser,status=1).all()
+    #get shared open ride
+    shared = Sharer.objects.filter(sharer_id=currUser.user_id).values_list('ride_id') #share obj
+    #edit_list_next = Ride.objects.filter(ride_id=shared)
+    #sharer's view only list not yet implemented!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    view_list = Ride.objects.filter(owner_id=currUser,status=2).all()
+    completed_list = Ride.objects.filter(owner_id=currUser,status=3).all()
+    return render(request, 'depart_list.html',{'owners':edit_list,'shared':shared,'view':view_list,'completed':completed_list})
 
 def home(request):
     return render(request,'home.html')
@@ -215,3 +223,19 @@ def user_edit(request):
         return redirect('dashboard')
     return render(request, 'user_edit.html', {"form": form})
 
+def ride_edit(request,rid):
+    info = request.session.get("info")
+    if not info:
+        return redirect("/login")
+    if request.method =="GET":
+        #get current data
+        raw_obj = Ride.objects.filter(ride_id=rid).first()
+        form = rideForm(instance=raw_obj)
+        return render(request,'ride_edit.html',{"form":form})
+    #POST
+    raw_obj = Ride.objects.filter(ride_id=rid).first()
+    form = rideForm(data=request.POST,instance=raw_obj)
+    if form.is_valid():
+        form.save()
+        return redirect('departList')
+    return render(request, 'ride_edit.html', {"form": form})

@@ -55,57 +55,105 @@
       <table class="table table-bordered">
         <thead>
           <tr>
-            <th>ID</th>
             <th>Destination</th>
+            <th>Arrival Date</th>
             <th>Arrival Time</th>
-            <th>Passenger Number</th>
-            <th>Vehicle_type</th>
-            <th>Sharer Number</th>
+            <th>Passenger Numbers</th>
+            <th>Vehicle type</th>
+            <th>Special Requirement</th>
             <th>Status</th>
             <th>Action</th>
           </tr>
         </thead>
         <tbody>
+            {% for  owner in owners%}
           <tr>
-            <th scope="row">1</th>
-            <td>New York</td>
-            <td>10:00am</td>
-            <td>3</td>
-            <td>car</td>
-            <td>1</td>
-            <td>confirmed</td>
+            <td>{{ owner.destination}}</td>
+            <td>{{owner.arrival_date}}</td>
+            <td>{{owner.arrival_time}}</td>
+            <td>{{owner.num_passengers}}</td>
+              {% if not owner.vehicle_type%}
+                <td> </td>
+              {% else %}
+                 <td>{{owner.vehicle_type}}</td>
+              {% endif %}
+              {% if not owner.special_req%}
+                <td> </td>
+              {% else %}
+                 <td>{{owner.special_req}}</td>
+              {% endif %}
+            <td>Not Confirmed</td>
             <td>
-              <a class="btn btn-success btn-xs">edit</a>
-              <a class="btn btn-danger btn-xs">delete</a>
+                <a class="btn btn-success btn-xs" href="/settings/{{owner.ride_id}}/edit-ride/">edit</a>
             </td>
           </tr>
+            {% endfor %}
+            {% for  owner in shared%}
           <tr>
-            <th scope="row">2</th>
-            <td>Duke Univ</td>
-            <td>17:00pm</td>
-            <td>4</td>
-            <td>car</td>
-            <td>2</td>
-            <td>complete</td>
+            <td>{{ owner.destination}}</td>
+            <td>{{owner.arrival_date}}</td>
+            <td>{{owner.arrival_time}}</td>
+            <td>{{owner.num_passengers}}</td>
+              {% if not owner.vehicle_type%}
+                <td> </td>
+              {% else %}
+                 <td>{{owner.vehicle_type}}</td>
+              {% endif %}
+              {% if not owner.special_req%}
+                <td> </td>
+              {% else %}
+                 <td>{{owner.vspecial_req}}</td>
+              {% endif %}
+            <td>Not Confirmed</td>
             <td>
               <a class="btn btn-success btn-xs">edit</a>
-              <a class="btn btn-danger btn-xs">delete</a>
             </td>
           </tr>
+            {% endfor %}
+            {% for  owner in view_list%}
           <tr>
-            <th scope="row">3</th>
-            <td>Chapel Hill</td>
-            <td>12:00pm</td>
-            <td>2</td>
-            <td>car</td>
-            <td>0</td>
-            <td>open</td>
+            <td>{{ owner.destination}}</td>
+            <td>{{owner.arrival_date}}</td>
+            <td>{{owner.arrival_time}}</td>
+            <td>{{owner.num_passengers}}</td>
+              {% if not owner.vehicle_type%}
+                <td> </td>
+              {% else %}
+                 <td>{{owner.vehicle_type}}</td>
+              {% endif %}
+              {% if not owner.special_req%}
+                <td> </td>
+              {% else %}
+                 <td>{{owner.vspecial_req}}</td>
+              {% endif %}
+            <td>Confirmed</td>
             <td>
-              <a class="btn btn-success btn-xs">edit</a>
-              <a class="btn btn-danger btn-xs">delete</a>
+
             </td>
           </tr>
+            {% endfor %}
+            {% for  owner in completed_list%}
+          <tr>
+            <td>{{ owner.destination}}</td>
+            <td>{{owner.arrival_date}}</td>
+            <td>{{owner.arrival_time}}</td>
+            <td>{{owner.num_passengers}}</td>
+              {% if not owner.vehicle_type%}
+                <td> </td>
+              {% else %}
+                 <td>{{owner.vehicle_type}}</td>
+              {% endif %}
+              {% if not owner.special_req%}
+                <td> </td>
+              {% else %}
+                 <td>{{owner.vspecial_req}}</td>
+              {% endif %}
+            <td>Not Confirmed</td>
+            <td>
+
+            </td>
           </tr>
+            {% endfor %}
         </tbody>
       </table>
 </div>
