@@ -39,11 +39,6 @@
       <input class="form-control mr-sm-2" type="search" href="{% url 'search' %}"name="search" placeholder="Search" aria-label="Search">
       <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
     </form>
-      <form method="post" action="/logout/">
-  {% csrf_token %}
-        <button type="logout" class="btn btn-primary">logout</button> {{ err_msg }}
-    <!--<input type="submit" value="Submit"> {{ err_msg }}-->
-</form>
   </div>
 </nav>
 <hr>
@@ -65,7 +60,7 @@
           </tr>
         </thead>
         <tbody>
-            {% for  owner in owners%}
+            {% for  ride in rides%}
           <tr>
             <td>{{ owner.destination}}</td>
             <td>{{owner.arrival_date}}</td>
@@ -83,7 +78,7 @@
               {% endif %}
             <td>Not Confirmed</td>
             <td>
-                <a class="btn btn-success btn-xs" href="/settings/{{owner.ride_id}}/edit-ride/">edit</a>
+                <a class="btn btn-success btn-xs" href="/settings/{{owner.ride_id}}/accept_ride/">select</a>
             </td>
           </tr>
             {% endfor %}
@@ -147,8 +142,9 @@
               {% else %}
                  <td>{{owner.vspecial_req}}</td>
               {% endif %}
-            <td>Completed</td>
+            <td>Not Confirmed</td>
             <td>
+
             </td>
           </tr>
             {% endfor %}

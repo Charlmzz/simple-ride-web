@@ -39,17 +39,60 @@
       <input class="form-control mr-sm-2" type="search" href="{% url 'search' %}"name="search" placeholder="Search" aria-label="Search">
       <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
     </form>
-      <form method="post" action="/logout/">
-  {% csrf_token %}
-        <button type="logout" class="btn btn-primary">logout</button> {{ err_msg }}
-    <!--<input type="submit" value="Submit"> {{ err_msg }}-->
-</form>
   </div>
 </nav>
 <hr>
 
-    <br>
+    <form class="form-inline my-2 my-lg-0" method="post" action="/sharechoose/">
+      {% csrf_token %}
+      <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="DestDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Destination Choose
+          </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                           {% for ride in rides%}
+          <a class="dropdown-item" name="destination">{{ride.destination}}</a>
+              {% endfor %}
+        </div>
+      </li>
 
+    <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="ArrivTimeDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Arrive Date Choose
+          </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                           {% for ride in rides%}
+          <a class="dropdown-item" name="ridedate">{{ride.arrival_date}}</a>
+              {% endfor %}
+        </div>
+      </li>
+
+    <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="ArrivDateDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Arrive Time Choose
+          </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                           {% for ride in rides%}
+          <a class="dropdown-item" name="ridetime">{{ride.arrival_time}}</a>
+              {% endfor %}
+        </div>
+      </li>
+
+    <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="NumPassDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Passenger Number Choose
+          </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                           {% for ride in rides%}
+          <a class="dropdown-item" name="passnum" >{{ride.num_passengers}}</a>
+              {% endfor %}
+        </div>
+      </li>
+        <td>
+            <a class="btn btn-success btn-xs" href="share_list/{{ride.ride_id}}/choose_ride/">choose</a>
+        </td>
+    </form>
+<br>
   <div class="container">
       <table class="table table-bordered">
         <thead>
@@ -147,8 +190,9 @@
               {% else %}
                  <td>{{owner.vspecial_req}}</td>
               {% endif %}
-            <td>Completed</td>
+            <td>Not Confirmed</td>
             <td>
+
             </td>
           </tr>
             {% endfor %}

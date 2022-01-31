@@ -4,11 +4,13 @@ from django.contrib.auth.hashers import check_password
 from django.urls import reverse_lazy
 from django.views import generic
 from django.shortcuts import render, redirect
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, response
 from myride.models import *
 from django import forms
+from django.core.mail import EmailMessage
 from django.contrib.auth import authenticate,login
-from .models import User
+#from .models import User,Ride
+
 
 
 
@@ -71,7 +73,6 @@ def registration(request):
 #-------------------------------------driver reg end
 
 def storeInfo(request):
-
     return HttpResponse()
 
 #-----------------------------Sign up
@@ -79,11 +80,12 @@ def storeInfo(request):
 class signupForm(forms.ModelForm):
     class Meta:
         model = User
-        fields = ["name","user_name","password"]
+        fields = ["name","user_name","password","email"]
         widgets = {
             "name": forms.TextInput(attrs={"class": "form-control", "placeholder": "Enter name"}),
             "user_name": forms.TextInput(attrs={"class": "form-control", "placeholder": "Enter user name"}),
-            "password": forms.PasswordInput(attrs={"class": "form-control", "placeholder": "Enter password"})
+            "password": forms.PasswordInput(attrs={"class": "form-control", "placeholder": "Enter password"}),
+            "email": forms.EmailInput(attrs={"class":"form-control","placeholder":"Enter your email"})
         }
     def clean(self):
         if self.is_valid():
@@ -131,6 +133,10 @@ def login(request):
             return render(request, 'login.html', {"err_msg": "Incorrect username or password"})
     else:
         return render(request,'login.html', {"err_msg":"Incorrect username or password"})
+
+def logout(request):
+    request.session["info"]=None
+    return render(request,'login.html', {"err_msg":"Please login agian"})
 
 class SignUpView(generic.CreateView):
     form_class = UserCreationForm
@@ -185,6 +191,102 @@ def riderequest(request):
     else:
         return render(request,'rideRequest.html',{"form":form})
 
+
+def rideshare(request):
+    info = request.session.get("info")
+    if not info:
+        return redirect("/login")
+    if request.method=="GET":
+        form = rideForm()
+        return render(request,'shareRequest.html',{"form":form})
+    #POST
+    form = rideForm(data=request.POST)
+    if form.is_valid():
+        obj = form.save(commit=False)
+        lastRide = Ride.objects.last()
+        if not lastRide:
+            obj.ride_id = 1
+        else:
+            obj.ride_id = lastRide.ride_id+1
+        obj.sharer_num = 0
+        obj.status = 1
+        currUser = User.objects.get(user_id=info)
+        obj.owner_id = currUser
+        obj.save()
+        return render(request,'rideRequestSuccess.html')
+    else:
+        return render(request,'shareRequest.html',{"form":form})
+
+def search(request ):
+    result = request.POST['search']
+    if Ride.objects.filter(destination=result).exists():
+        ride = Ride.objects.filter(passnum=result).all()
+        print(ride.destination,ride.ride_id)
+        #form = rideForm(data=request.POST,instance=ride)
+        return render(request, 'depart_list.html', {"owners": ride})
+
+def shareList(request):
+    allRide = Ride.objects.all()
+    return render(request,'share_list.html',{"rides":allRide})
+
+def sharechoose(request):
+    info = request.session.get("info")
+    if not info:
+        return redirect("/login")
+    dest = request.POST['destination']
+    date = request.POST['ridedate']
+    time = request.POST['ridetime']
+    num = request.POST['passnum']
+    ride = Ride.objects.filter(destination=dest,arrival_date=date,arrival_time=time,num_passengers=num).all()
+    print(ride.destination,ride.arrival_date)
+    return render(request, 'driver_display.html', {"rides":ride})
+
+def driverDisplay(request):
+    info = request.session.get("info")
+    currUser = User.objects.filter(user_id=info).first()
+    vehicle = currUser.vehicle_id
+    if not vehicle:
+        return redirect('register')
+    openRide = Ride.objects.filter(status=1, num_passengers__lte=vehicle.max_passenger, vehicle_type=None,owner_id__lt=info).all()
+    openRide1 = Ride.objects.filter(status=1,num_passengers__lte=vehicle.max_passenger,vehicle_type=vehicle.type,owner_id__lt=info).all()
+    type=openRide|openRide1
+    Spe = Ride.objects.filter(status=1, num_passengers__lte=vehicle.max_passenger, special_req=None,owner_id__lt=info).all()
+    Spe1 = Ride.objects.filter(status=1, num_passengers__lte=vehicle.max_passenger,special_req=vehicle.special_info,owner_id__lt=info).all()
+    specialReq=Spe | Spe1
+    rideFinal = type & specialReq
+
+    #status 2 for current driver
+    currRide = Ride.objects.filter(driver_id=info,status=2).all()
+    return render(request, 'driver_display.html', {"rides":rideFinal,"currs":currRide})
+
+def accept_ride(request,rid):
+    info = request.session.get("info")
+    if not info:
+        return redirect("/login")
+    #get current data
+    raw_obj = Ride.objects.filter(ride_id=rid).first()
+    raw_obj.driver_id = info
+    raw_obj.status = 2
+    raw_obj.save()
+    owner = raw_obj.owner_id
+    owner_email = owner.email
+    email = EmailMessage('Ride Confirmation', 'This is to confirm that a driver accepted your email', to=[owner_email])
+    email.send()
+
+    sharer = Sharer.objects.filter(ride_id=raw_obj).all()
+
+    return redirect('/driver_display')
+
+def complete_ride(request,rid):
+    info = request.session.get("info")
+    if not info:
+        return redirect("/login")
+    ride = Ride.objects.filter(ride_id=rid).first()
+    ride.status = 3
+    ride.save()
+    return redirect('/driver_display')
+
+
 def vehicle_edit(request):
     info = request.session.get("info")
     if not info:
@@ -202,8 +304,18 @@ def vehicle_edit(request):
     form = regForm(data=request.POST,instance=raw_obj)
     if form.is_valid():
         form.save()
-        return redirect('dashboard')
+        return redirect('/settings')
     return render(request, 'vehicle_edit.html', {"form": form})
+
+class editUserForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ["name","password","email"]
+        widgets = {
+            "name": forms.TextInput(attrs={"class": "form-control", "placeholder": "Enter name"}),
+            "password": forms.PasswordInput(attrs={"class": "form-control", "placeholder": "Enter password"}),
+            "email": forms.EmailInput(attrs={"class":"form-control","placeholder":"Enter your email"})
+        }
 
 def user_edit(request):
     info = request.session.get("info")
@@ -212,15 +324,14 @@ def user_edit(request):
     if request.method =="GET":
         #get current data
         raw_obj = User.objects.filter(user_id=info).first()
-        form = signupForm(instance=raw_obj)
+        form = editUserForm(instance=raw_obj)
         return render(request,'user_edit.html',{"form":form})
     #POST
     raw_obj = User.objects.filter(user_id=info).first()
-    form = signupForm(data=request.POST,instance=raw_obj)
+    form = editUserForm(data=request.POST,instance=raw_obj)
     if form.is_valid():
-        form.clean()
         form.save()
-        return redirect('dashboard')
+        return redirect('/settings')
     return render(request, 'user_edit.html', {"form": form})
 
 def ride_edit(request,rid):
