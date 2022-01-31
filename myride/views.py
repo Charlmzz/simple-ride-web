@@ -182,7 +182,7 @@ def riderequest(request):
         else:
             obj.ride_id = lastRide.ride_id+1
         #!!!!!!!!!!!!also need owner id
-        obj.sharer_num = 0
+        obj.sharer_num = 0 + obj.num_passengers
         obj.status = 1
         currUser = User.objects.get(user_id=info)
         obj.owner_id = currUser
@@ -247,10 +247,10 @@ def driverDisplay(request):
     vehicle = currUser.vehicle_id
     if not vehicle:
         return redirect('register')
-    openRide = Ride.objects.filter(status=1, num_passengers__lte=vehicle.max_passenger, vehicle_type=None,owner_id__lt=info).all()
+    openRide = Ride.objects.filter(status=1, num_passengers__lte=vehicle.max_passenger, vehicle_type__isnull=True,owner_id__lt=info).all()
     openRide1 = Ride.objects.filter(status=1,num_passengers__lte=vehicle.max_passenger,vehicle_type=vehicle.type,owner_id__lt=info).all()
     type=openRide|openRide1
-    Spe = Ride.objects.filter(status=1, num_passengers__lte=vehicle.max_passenger, special_req=None,owner_id__lt=info).all()
+    Spe = Ride.objects.filter(status=1, num_passengers__lte=vehicle.max_passenger, special_req__isnull=True,owner_id__lt=info).all()
     Spe1 = Ride.objects.filter(status=1, num_passengers__lte=vehicle.max_passenger,special_req=vehicle.special_info,owner_id__lt=info).all()
     specialReq=Spe | Spe1
     rideFinal = type & specialReq
@@ -272,9 +272,13 @@ def accept_ride(request,rid):
     owner_email = owner.email
     email = EmailMessage('Ride Confirmation', 'This is to confirm that a driver accepted your email', to=[owner_email])
     email.send()
-
-    sharer = Sharer.objects.filter(ride_id=raw_obj).all()
-
+    if raw_obj.num_passengers < raw_obj.sharer_num: #meaning there is at least a sharer
+        sharer = Sharer.objects.filter(ride_id=raw_obj).all()
+        for sh in sharer:
+            sh_id = sh.sharer_id
+            currSh = User.objects.get(user_id=sh_id)
+            email = EmailMessage('Ride Confirmation', 'This is to confirm that a driver accepted your email', to=[currSh.email])
+            email.send()
     return redirect('/driver_display')
 
 def complete_ride(request,rid):
@@ -348,5 +352,8 @@ def ride_edit(request,rid):
     form = rideForm(data=request.POST,instance=raw_obj)
     if form.is_valid():
         form.save()
+        raw_obj = Ride.objects.filter(ride_id=rid).first()
+        raw_obj.sharer_num = raw_obj.sharer_num+raw_obj.num_passengers
+        raw_obj.save()
         return redirect('departList')
     return render(request, 'ride_edit.html', {"form": form})
