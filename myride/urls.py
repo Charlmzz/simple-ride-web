@@ -22,12 +22,14 @@ urlpatterns = [
     path('settings/',views.dashboard,name='dashboard'),
     path('settings/edit-vehicle/',views.vehicle_edit,name='vehicleEdit'),
     path('settings/edit-user/',views.user_edit,name='userEdit'),
+    path('settings/<int:rid>/view-details/',views.ride_view,name='viewRide'),
     path('settings/<int:rid>/edit-ride/',views.ride_edit,name='rideEdit'),
     path('search/', views.search, name='search'),
     path('share_list/', views.shareList, name='share_list'),
-    path('share_list/<int:rid>/choose_ride/', views.sharechoose, name='sharechoose'),
+    path('share_list/choose_ride/', views.sharechoose, name='choose_ride'),
     path('driver_display/',views.driverDisplay, name='driver_display'),
     path('driver_display/<int:rid>/accept_ride/', views.accept_ride, name='accept_ride'),
     path('driver_display/<int:rid>/complete_ride/', views.complete_ride, name='complete_ride'),
+
 
 ]

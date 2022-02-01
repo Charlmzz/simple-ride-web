@@ -1,4 +1,6 @@
 # accounts/views.py
+from datetime import datetime
+
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.hashers import check_password
 from django.urls import reverse_lazy
@@ -23,7 +25,7 @@ def depart_list(request):
     #get owned ride
     edit_list = Ride.objects.filter(owner_id=currUser,status=1).all()
     #get shared open ride
-    shared = Sharer.objects.filter(sharer_id=currUser.user_id).values_list('ride_id') #share obj
+    shared = Sharer.objects.filter(sharer_id=currUser.user_id) #share obj
     #edit_list_next = Ride.objects.filter(ride_id=shared)
     #sharer's view only list not yet implemented!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     view_list = Ride.objects.filter(owner_id=currUser,status=2).all()
@@ -233,13 +235,16 @@ def sharechoose(request):
     info = request.session.get("info")
     if not info:
         return redirect("/login")
-    dest = request.POST['destination']
-    date = request.POST['ridedate']
-    time = request.POST['ridetime']
-    num = request.POST['passnum']
-    ride = Ride.objects.filter(destination=dest,arrival_date=date,arrival_time=time,num_passengers=num).all()
-    print(ride.destination,ride.arrival_date)
-    return render(request, 'driver_display.html', {"rides":ride})
+    dest = request.POST.get('Destination')
+    date = request.POST.get('Arrival Date')
+    d = datetime.strptime(date,'%H:%M:%S')
+    time = request.POST.get('Arrival Time')
+    num = request.POST.get('number of passengers')
+    ride = Ride.objects.filter(destination=dest, arrival_date=d,arrival_time=time,num_passengers=num).all()
+    print(dest,date,time)
+    if(dest):
+        return redirect("/login")
+    return HttpResponse("lll")
 
 def driverDisplay(request):
     info = request.session.get("info")
@@ -357,3 +362,19 @@ def ride_edit(request,rid):
         raw_obj.save()
         return redirect('departList')
     return render(request, 'ride_edit.html', {"form": form})
+
+def get_data(request):
+    tools = request.POST.get("tools")
+    print(tools)
+    return HttpResponse()
+
+def ride_view(request,rid):
+    info = request.session.get("info")
+    if not info:
+        return redirect("/login")
+    ride = Ride.objects.filter(ride_id=rid).first()
+    driver = ride.driver_id
+    driver_info = User.objects.filter(user_id=driver).first()
+    vehicle_info = driver_info.vehicle_id
+    ride.save()
+    return render(request,'ride_display.html',{"owner":ride,"driver":driver_info,"vehicle":vehicle_info})

@@ -88,28 +88,30 @@
           </tr>
             {% endfor %}
             {% for  owner in shared%}
+                {% if owner.ride_id.status == 1 %}
           <tr>
-            <td>{{ owner.destination}}</td>
-            <td>{{owner.arrival_date}}</td>
-            <td>{{owner.arrival_time}}</td>
-            <td>{{owner.num_passengers}}</td>
-              {% if not owner.vehicle_type%}
+            <td>{{ owner.ride_id.destination}}</td>
+            <td>{{owner.ride_id.arrival_date}}</td>
+            <td>{{owner.ride_id.arrival_time}}</td>
+            <td>{{owner.ride_id.num_passengers}}</td>
+              {% if not owner.ride_id.vehicle_type%}
                 <td> </td>
               {% else %}
-                 <td>{{owner.vehicle_type}}</td>
+                 <td>{{owner.ride_id.vehicle_type}}</td>
               {% endif %}
-              {% if not owner.special_req%}
+              {% if not owner.ride_id.special_req%}
                 <td> </td>
               {% else %}
-                 <td>{{owner.vspecial_req}}</td>
+                 <td>{{owner.ride_id.special_req}}</td>
               {% endif %}
             <td>Not Confirmed</td>
             <td>
-              <a class="btn btn-success btn-xs">edit</a>
+        <a class="btn btn-success btn-xs" href="/settings/{{owner.ride_id}}/edit-ride/">edit</a>
             </td>
           </tr>
+                {% endif %}
             {% endfor %}
-            {% for  owner in view_list%}
+            {% for  owner in view%}
           <tr>
             <td>{{ owner.destination}}</td>
             <td>{{owner.arrival_date}}</td>
@@ -123,15 +125,39 @@
               {% if not owner.special_req%}
                 <td> </td>
               {% else %}
-                 <td>{{owner.vspecial_req}}</td>
+                 <td>{{owner.special_req}}</td>
               {% endif %}
             <td>Confirmed</td>
             <td>
-
+            <a class="btn btn-success btn-xs" href="/settings/{{owner.ride_id}}/view-details/">detail</a>
             </td>
           </tr>
             {% endfor %}
-            {% for  owner in completed_list%}
+            {% for  owner in shared%}
+                {% if owner.ride_id.status == 2 %}
+          <tr>
+            <td>{{ owner.destination}}</td>
+            <td>{{owner.arrival_date}}</td>
+            <td>{{owner.arrival_time}}</td>
+            <td>{{owner.num_passengers}}</td>
+              {% if not owner.vehicle_type%}
+                <td> </td>
+              {% else %}
+                 <td>{{owner.vehicle_type}}</td>
+              {% endif %}
+              {% if not owner.special_req%}
+                <td> </td>
+              {% else %}
+                 <td>{{owner.special_req}}</td>
+              {% endif %}
+            <td>Confirmed</td>
+            <td>
+            <a class="btn btn-success btn-xs" href="/settings/{{owner.ride_id}}/view-details/">detail</a>
+            </td>
+          </tr>
+                {% endif %}
+            {% endfor %}
+            {% for  owner in completed%}
           <tr>
             <td>{{ owner.destination}}</td>
             <td>{{owner.arrival_date}}</td>
@@ -151,6 +177,30 @@
             <td>
             </td>
           </tr>
+            {% endfor %}
+            {% for  owner in shared%}
+                {% if owner.ride_id.status == 3 %}
+          <tr>
+            <td>{{ owner.destination}}</td>
+            <td>{{owner.arrival_date}}</td>
+            <td>{{owner.arrival_time}}</td>
+            <td>{{owner.num_passengers}}</td>
+              {% if not owner.vehicle_type%}
+                <td> </td>
+              {% else %}
+                 <td>{{owner.vehicle_type}}</td>
+              {% endif %}
+              {% if not owner.special_req%}
+                <td> </td>
+              {% else %}
+                 <td>{{owner.special_req}}</td>
+              {% endif %}
+            <td>Completed</td>
+            <td>
+            <a class="btn btn-success btn-xs" href="/settings/{{owner.ride_id}}/view-details/">detail</a>
+            </td>
+          </tr>
+                {% endif %}
             {% endfor %}
         </tbody>
       </table>

@@ -34,7 +34,14 @@
         </div>
       </li>
     </ul>
-    <form class="form-inline my-2 my-lg-0" method="post" action="/search/">
+        </form>
+      <form method="post" action="/logout/">
+  {% csrf_token %}
+        <button type="logout" class="btn btn-primary">logout</button> {{ err_msg }}
+    <!--<input type="submit" value="Submit"> {{ err_msg }}-->
+</form>
+
+    <form class="form-inline my-2 my-lg-0" method="get" action="/search/">
       {% csrf_token %}
       <input class="form-control mr-sm-2" type="search" href="{% url 'search' %}"name="search" placeholder="Search" aria-label="Search">
       <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
@@ -43,55 +50,116 @@
 </nav>
 <hr>
 
-    <form class="form-inline my-2 my-lg-0" method="post" action="/sharechoose/">
+<!--
+    <form class="form-inline my-2 my-lg-0" method="get" action="choose_ride">
       {% csrf_token %}
       <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" id="DestDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             Destination Choose
           </a>
+          <label>
+          <select name="DestDropdown">
         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                            {% for ride in rides%}
-          <a class="dropdown-item" name="destination">{{ride.destination}}</a>
+            <option>
+                <a class="dropdown-item",selected_value="{{ride.destination}}">{{ride.destination}}</a>
+            </option>
               {% endfor %}
         </div>
-      </li>
-
-    <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="ArrivTimeDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            Arrive Date Choose
-          </a>
-        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                           {% for ride in rides%}
-          <a class="dropdown-item" name="ridedate">{{ride.arrival_date}}</a>
-              {% endfor %}
-        </div>
+          </select>
+              </label>
       </li>
 
     <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" id="ArrivDateDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            Arrive Time Choose
+            Arrive Date Choose
           </a>
+        <label>
+        <select name="ArrivDateDropdown">
         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                            {% for ride in rides%}
-          <a class="dropdown-item" name="ridetime">{{ride.arrival_time}}</a>
+            <option>
+          <a class="dropdown-item" selected_value="{{ride.arrival_date}}">{{ride.arrival_date}}</a>
+                </option>
               {% endfor %}
         </div>
+            </select>
+            </label>
+      </li>
+
+    <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="ArrivTimeDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Arrive Time Choose
+          </a>
+        <label>
+        <select name="ArrivTimeDropdown">
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                           {% for ride in rides%}
+            <option>
+          <a class="dropdown-item" selected_value="{{ride.arrival_time}}">{{ride.arrival_time}}</a>
+                </option>
+              {% endfor %}
+        </div>
+            </select>
+            </label>
       </li>
 
     <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" id="NumPassDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             Passenger Number Choose
           </a>
+        <label>
+        <select name="NumPassDropdown">
         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                            {% for ride in rides%}
-          <a class="dropdown-item" name="passnum" >{{ride.num_passengers}}</a>
+            <option>
+          <a class="dropdown-item" >{{ride.num_passengers}}</a>
+                </option>
               {% endfor %}
         </div>
+            </select>
+            </label>
       </li>
         <td>
-            <a class="btn btn-success btn-xs" href="share_list/{{ride.ride_id}}/choose_ride/">choose</a>
+            <a class="btn btn-success btn-xs" href="{% url 'choose_ride' %}">choose</a>
         </td>
     </form>
+    -->
+
+<form action="{% url 'choose_ride' %}"method="post" name="tasksubmit">
+        {% csrf_token %}
+            <label>Destination：
+                <select name="Destination">
+                {% for ride in rides%}
+                <option selected value="{{ride.destination}}">{{ride.num_passengers}}</option>
+                    {% endfor %}
+                </select>
+            </label>
+             <label>Arrival Date：
+                <select name="Arrival Date">
+                    {% for ride in rides%}
+                <option selected value="{{ride.arrival_date}}">{{ride.arrival_date}}</option>
+                    {% endfor %}
+                </select>
+            </label>
+            <label>Arrival Time：
+                <select name="Arrival Time">
+                    {% for ride in rides%}
+                <option selected value={{ride.arrival_time}}>{{ride.arrival_time}}</option>
+                    {% endfor %}
+                </select>
+            </label>
+             <label>number of passengers：
+                <select name="number of passengers">
+                    {% for ride in rides%}
+                <option selected value="{{ride.num_passengers}}">{{ride.num_passengers}}</option>
+                    {% endfor %}
+                </select>
+            </label>
+    <input type="submit" value="choose">
+</form>
+
+
 <br>
   <div class="container">
       <table class="table table-bordered">

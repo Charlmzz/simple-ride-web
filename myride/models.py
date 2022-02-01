@@ -63,6 +63,7 @@ class Ride(models.Model):
 class Sharer(models.Model):
     ride_id = models.ForeignKey(to="Ride",to_field="ride_id", on_delete=models.CASCADE)
     sharer_id = models.IntegerField(null=False,primary_key=True)
+    sharer_num = models.IntegerField(verbose_name="Number of Sharers", null=False)
 
 
 
