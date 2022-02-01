@@ -357,10 +357,7 @@ def ride_edit(request,rid):
     form = rideForm(data=request.POST,instance=raw_obj)
     if form.is_valid():
         form.save()
-        raw_obj = Ride.objects.filter(ride_id=rid).first()
-        raw_obj.sharer_num = raw_obj.sharer_num+raw_obj.num_passengers
-        raw_obj.save()
-        return redirect('departList')
+        return redirect('/depart_list')
     return render(request, 'ride_edit.html', {"form": form})
 
 def get_data(request):
@@ -378,3 +375,11 @@ def ride_view(request,rid):
     vehicle_info = driver_info.vehicle_id
     ride.save()
     return render(request,'ride_display.html',{"owner":ride,"driver":driver_info,"vehicle":vehicle_info})
+
+def ride_cancel(request,rid):
+    info = request.session.get("info")
+    if not info:
+        return redirect("/login")
+    ride = Ride.objects.get(ride_id=rid)
+    ride.delete()
+    return redirect('/depart_list')

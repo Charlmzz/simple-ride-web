@@ -84,6 +84,7 @@
             <td>Not Confirmed</td>
             <td>
                 <a class="btn btn-success btn-xs" href="/settings/{{owner.ride_id}}/edit-ride/">edit</a>
+                <a class="btn btn-danger btn-xs" href="/settings/{{owner.ride_id}}/cancel-ride/">Cancel</a>
             </td>
           </tr>
             {% endfor %}
@@ -106,7 +107,7 @@
               {% endif %}
             <td>Not Confirmed</td>
             <td>
-        <a class="btn btn-success btn-xs" href="/settings/{{owner.ride_id}}/edit-ride/">edit</a>
+        <a class="btn btn-success btn-xs" href="/settings/{{owner.ride_id}}/edit-ride/">Cancel Share</a>
             </td>
           </tr>
                 {% endif %}
@@ -129,7 +130,7 @@
               {% endif %}
             <td>Confirmed</td>
             <td>
-            <a class="btn btn-success btn-xs" href="/settings/{{owner.ride_id}}/view-details/">detail</a>
+            <a class="btn btn-success btn-xs" href="/settings/{{owner.ride_id}}/view-details/">details</a>
             </td>
           </tr>
             {% endfor %}
@@ -152,7 +153,7 @@
               {% endif %}
             <td>Confirmed</td>
             <td>
-            <a class="btn btn-success btn-xs" href="/settings/{{owner.ride_id}}/view-details/">detail</a>
+            <a class="btn btn-success btn-xs" href="/settings/{{owner.ride_id}}/view-details/">details</a>
             </td>
           </tr>
                 {% endif %}
@@ -197,7 +198,7 @@
               {% endif %}
             <td>Completed</td>
             <td>
-            <a class="btn btn-success btn-xs" href="/settings/{{owner.ride_id}}/view-details/">detail</a>
+            <a class="btn btn-success btn-xs" href="/settings/{{owner.ride_id}}/view-details/">details</a>
             </td>
           </tr>
                 {% endif %}

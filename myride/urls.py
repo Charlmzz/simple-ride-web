@@ -24,6 +24,7 @@ urlpatterns = [
     path('settings/edit-user/',views.user_edit,name='userEdit'),
     path('settings/<int:rid>/view-details/',views.ride_view,name='viewRide'),
     path('settings/<int:rid>/edit-ride/',views.ride_edit,name='rideEdit'),
+    path('settings/<int:rid>/cancel-ride/',views.ride_cancel,name='rideCancel'),
     path('search/', views.search, name='search'),
     path('share_list/', views.shareList, name='share_list'),
     path('share_list/choose_ride/', views.sharechoose, name='choose_ride'),
