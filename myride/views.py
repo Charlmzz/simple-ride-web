@@ -229,7 +229,7 @@ def search(request ):
 
 def shareList(request):
     allRide = Ride.objects.all()
-    return render(request,'share_list.html',{"rides":allRide})
+    return render(request,'share_list.html',{"rides":allRide,"owners":allRide})
 
 def sharechoose(request):
     info = request.session.get("info")
@@ -237,14 +237,15 @@ def sharechoose(request):
         return redirect("/login")
     dest = request.POST.get('Destination')
     date = request.POST.get('Arrival Date')
-    d = datetime.strptime(date,'%H:%M:%S')
+    d = datetime.strptime(date,'%b. %d, %Y')
     time = request.POST.get('Arrival Time')
+    if time=="noon":
+        time="12:00"
+    t = datetime.strptime(time,'%H:%M')
     num = request.POST.get('number of passengers')
-    ride = Ride.objects.filter(destination=dest, arrival_date=d,arrival_time=time,num_passengers=num).all()
-    print(dest,date,time)
-    if(dest):
-        return redirect("/login")
-    return HttpResponse("lll")
+    allRide = Ride.objects.all()
+    ride = Ride.objects.filter(destination=dest, arrival_date__lte=d,arrival_time__lte=t,num_passengers__lte=num).all()
+    return render(request, 'share_list.html', {"owners":ride,"rides":allRide})
 
 def driverDisplay(request):
     info = request.session.get("info")
@@ -360,10 +361,6 @@ def ride_edit(request,rid):
         return redirect('/depart_list')
     return render(request, 'ride_edit.html', {"form": form})
 
-def get_data(request):
-    tools = request.POST.get("tools")
-    print(tools)
-    return HttpResponse()
 
 def ride_view(request,rid):
     info = request.session.get("info")
@@ -383,3 +380,31 @@ def ride_cancel(request,rid):
     ride = Ride.objects.get(ride_id=rid)
     ride.delete()
     return redirect('/depart_list')
+
+def share_cancel(request,rid):
+    info = request.session.get("info")
+    if not info:
+        return redirect("/login")
+    ride = Ride.objects.get(ride_id=rid)
+    share = Sharer.objects.filter(ride_id=ride,sharer_id=info).first()
+    ride.sharer_num = ride.sharer_num - share.sharer_num
+    ride.save()
+    share.delete()
+    return redirect('/depart_list')
+
+def select_ride(request,rid):
+    info = request.session.get("info")
+    if not info:
+        return redirect("/login")
+    if request.method=="GET":
+        return render(request,'select_share.html')
+    ride = Ride.objects.get(ride_id=rid)
+    if request.method == "POST":
+        result = request.POST.get('pass_num')
+        ride.sharer_num = ride.sharer_num + int(result)
+        share = Sharer(ride_id=ride,sharer_id=info,sharer_num=result)
+        ride.save()
+        share.save()
+    return redirect('/depart_list')
+
+
